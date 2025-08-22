@@ -1,27 +1,27 @@
-FROM nikolaik/python-nodejs:python3.7-nodejs16
+FROM python:3.12.11-slim
 
-RUN mkdir -p /tests/dummy
-RUN mkdir -p /tests/init
-RUN mkdir -p /tests/listener
-RUN mkdir -p /tests/manager
-RUN mkdir -p /tests/simulation-tools
+# Ensure that the used folders exist
+RUN mkdir -p /dummy && \
+    mkdir -p /init && \
+    mkdir -p /listener && \
+    mkdir -p /manager && \
+    mkdir -p /simulation-tools
 
-# install the Python libraries
+# Install the required packages
 COPY requirements.txt /requirements.txt
-RUN pip install --upgrade pip
-RUN pip install -r /requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r /requirements.txt
 
-WORKDIR /tests
-
-# install the Node.js libraries
-# this is required when using the time series classes and units which are not given in the premade list
-COPY package*.json /tests/
-RUN npm clean-install
-
+# Copy the application files
 COPY dummy/ /tests/dummy/
 COPY init/ /tests/init/
 COPY listener/ tests/listener/
 COPY manager/ /tests/manager/
 COPY simulation-tools/ /tests/simulation-tools/
+COPY run_tests.py /tests/run_tests.py
 
-CMD [ "python3", "-u", "-m", "unittest", "discover", "-s", ".", "-p", "*.py" ]
+# Set the working directory in the container
+WORKDIR /tests
+
+# Set the command to run the application
+CMD [ "python3", "-u", "run_tests.py" ]

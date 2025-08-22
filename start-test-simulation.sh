@@ -4,11 +4,7 @@
 # This source code is licensed under the MIT license. See LICENSE in the repository root directory.
 # Author(s): Ville Heikkilä <ville.heikkila@tuni.fi>
 
-exists() {
-    command -v "$1" >/dev/null 2>&1;
-}
-
-if exists "docker compose"
+if docker compose version >/dev/null 2>&1
 then
     compose_command="docker compose"
 else

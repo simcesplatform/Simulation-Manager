@@ -1,0 +1,7 @@
+[MASTER]
+# Add the simulation-tools directory to the Python path
+init-hook="import sys; import os; sys.path.append(os.getcwd()); import init"
+
+[MESSAGES CONTROL]
+# Disable the line-too-long and import-error messages from pylint
+disable=C0301, E0401

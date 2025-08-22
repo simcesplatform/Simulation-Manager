@@ -89,7 +89,7 @@ docker compose -f rabbitmq/docker-compose-rabbitmq.yml up --detach
 
 ## Run test simulation
 
-Edit the files [`common.env`](common.env), [`simulation_manager.env`](simulation_manager.env), [`dummy.env`](dummy.env), and [`docker-compose-test-simulation.yml`](docker-compose-test-simulation.yml) files with the parameters you want. At least [`common.env`](common.env) needs to be edited with the correct username and password for the RabbitMQ server.
+Edit the files [`env/common.env`](env/common.env), [`env/simulation_manager.env`](env/simulation_manager.env), [`env/dummy.env`](env/dummy.env), and [`docker-compose-test-simulation.yml`](docker-compose-test-simulation.yml) files with the parameters you want. At least [`env/common.env`](env/common.env) needs to be edited with the correct username and password for the RabbitMQ server.
 
 Running the `create_new_simulation_id.sh` script creates new simulation id based on the current time and inserts it to the configuration files.
 
@@ -114,7 +114,7 @@ docker compose -f docker_tests/docker-compose-rabbitmq.yml up --detach
 docker compose -f docker_tests/docker-compose-tests.yml up --build
 ```
 
-Only unit test for the manager and dummy component are run. To run the unit tests defined in the simulation-tools submodule go into the the simulation-tools folder and follow the instructions there.
+Only unit test for the manager and dummy component are run. To run the unit tests defined in the simulation-tools submodule go into the simulation-tools folder and follow the instructions there.
 
 ## Stop running simulation
 

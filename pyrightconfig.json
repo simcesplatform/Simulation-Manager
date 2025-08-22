@@ -8,5 +8,5 @@
         }
     ],
     "typeCheckingMode": "basic",
-    "reportPropertyTypeMismatch": "none"
+    "reportPropertyTypeMismatch": "information"
 }

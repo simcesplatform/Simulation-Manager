@@ -6,6 +6,7 @@
 
 """Unit test for the components module."""
 
+from typing import cast
 import unittest
 
 from manager.components import SimulationComponents
@@ -24,7 +25,7 @@ class TestSimulationComponents(unittest.TestCase):
         self.assertEqual(components.get_component_list(), [])
         self.assertEqual(components.get_latest_full_epoch(), NO_MESSAGES)
         self.assertEqual(str(components), "")
-        self.assertEqual(components.get_latest_epoch_for_component("test"), None)
+        self.assertIsNone(components.get_latest_epoch_for_component("test"))
 
     def test_add_and_remove_components(self):
         """Tests adding new components."""
@@ -40,11 +41,11 @@ class TestSimulationComponents(unittest.TestCase):
         self.assertEqual(components.get_component_list(), new_component_names)
         self.assertEqual(components.get_latest_full_epoch(), NO_MESSAGES)
         self.assertEqual(str(components), ", ".join([
-            "{:s} ({:d}, False)".format(component_name, NO_MESSAGES)
+            f"{component_name} ({NO_MESSAGES}, False)"
             for component_name in new_component_names
         ]))
 
-        self.assertEqual(components.get_latest_epoch_for_component("test"), None)
+        self.assertIsNone(components.get_latest_epoch_for_component("test"))
         for component_name in new_component_names:
             self.assertEqual(components.get_latest_epoch_for_component(component_name), NO_MESSAGES)
 
@@ -55,12 +56,12 @@ class TestSimulationComponents(unittest.TestCase):
         self.assertEqual(components.get_component_list(), remaining_component_names)
         self.assertEqual(components.get_latest_full_epoch(), NO_MESSAGES)
         self.assertEqual(str(components), ", ".join([
-            "{:s} ({:d}, False)".format(component_name, NO_MESSAGES)
+            f"{component_name} ({NO_MESSAGES}, False)"
             for component_name in remaining_component_names
         ]))
 
         for component_name in removed_component_names:
-            self.assertEqual(components.get_latest_epoch_for_component(component_name), None)
+            self.assertIsNone(components.get_latest_epoch_for_component(component_name))
         for component_name in remaining_component_names:
             self.assertEqual(components.get_latest_epoch_for_component(component_name), NO_MESSAGES)
 
@@ -100,14 +101,14 @@ class TestSimulationComponents(unittest.TestCase):
 
                 for actual_component_name in new_component_names:
                     with self.subTest(component_name=actual_component_name):
-                        self.assertGreaterEqual(
-                            components.get_latest_epoch_for_component(actual_component_name), full_epoch)
+                        latest_epoch_for_component = components.get_latest_epoch_for_component(actual_component_name)
+                        self.assertIsNotNone(latest_epoch_for_component)
+                        latest_epoch_for_component_int = cast(int, latest_epoch_for_component)
+                        self.assertGreaterEqual(latest_epoch_for_component_int, full_epoch)
                         if actual_component_name in component_names:
-                            self.assertEqual(
-                                components.get_latest_epoch_for_component(actual_component_name), epoch_number)
+                            self.assertEqual(latest_epoch_for_component_int, epoch_number)
                         else:
-                            self.assertLess(
-                                components.get_latest_epoch_for_component(actual_component_name), epoch_number)
+                            self.assertLess(latest_epoch_for_component_int, epoch_number)
 
                 self.assertTrue(components.is_in_normal_state())
 

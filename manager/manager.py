@@ -174,7 +174,7 @@ class SimulationManager:
 
     async def send_state_message(self, start_timer: bool = True, stop_with_error: bool = True):
         """Sends a simulation state message."""
-        LOGGER.debug("Sending simulation state message: '{:s}'".format(self.get_simulation_state()))
+        LOGGER.debug(f"Sending simulation state message: '{self.get_simulation_state()}'")
 
         new_simulation_state_message = self.__get_simulation_state_message()
         if new_simulation_state_message is None:
@@ -195,32 +195,28 @@ class SimulationManager:
         if isinstance(message_object, StatusMessage):
             await self.status_message_handler(message_object, message_routing_key)
         else:
-            LOGGER.warning("Received '{:s}' message when expecting for '{:s}' message".format(
-                str(type(message_object)), str(StatusMessage)))
+            LOGGER.warning(f"Received '{type(message_object)}' message when expecting for '{StatusMessage}' message")
 
     async def status_message_handler(self, message_object: StatusMessage, message_routing_key: str):
         """Handles received status message. After receiving a proper status message checks
            if all components have registered for the epoch and a new epoch could be started."""
         if message_object.simulation_id != self.simulation_id:
-            LOGGER.info("Received a status message for a different simulation: '{:s}' instead of '{:s}'".format(
-                message_object.simulation_id, self.simulation_id))
+            LOGGER.info(f"Received a status message for a different simulation: '{message_object.simulation_id}' instead of '{self.simulation_id}'")
         elif message_object.message_type != StatusMessage.CLASS_MESSAGE_TYPE:
-            LOGGER.warning("Received a status message with wrong message type: '{:s}' instead of '{:s}'".format(
-                message_object.message_type, StatusMessage.CLASS_MESSAGE_TYPE))
+            LOGGER.warning(f"Received a status message with wrong message type: '{message_object.message_type}' instead of '{StatusMessage.CLASS_MESSAGE_TYPE}'")
         elif message_object.source_process_id != self.__manager_name:
-            LOGGER.debug("Received a status message from {:s} at topic {:s}".format(
-                message_object.source_process_id, message_routing_key))
+            LOGGER.debug(f"Received a status message from {message_object.source_process_id} at topic {message_routing_key}")
             if message_object.warnings:
                 # TODO: Implement actual handling of warnings instead of just logging them.
-                LOGGER.warning("Status message from '{:s}' contained warnings: {:s}".format(
-                    message_object.source_process_id, ", ".join(message_object.warnings)))
+                LOGGER.warning(f"Status message from '{message_object.source_process_id}' contained warnings: {', '.join(message_object.warnings)}")
 
             if message_object.value == SimulationManager.READY_STATUS:
                 self.__simulation_components.register_status_message(
                     message_object.source_process_id, message_object.epoch_number, message_object.message_id, False)
             elif message_object.value == SimulationManager.ERROR_STATUS:
-                LOGGER.debug("Received an error message from {:s} with description '{:s}' at topic {:s}".format(
-                    message_object.source_process_id, message_object.description, message_routing_key))
+                LOGGER.debug(
+                    f"Received an error message from {message_object.source_process_id} with description " +
+                    f"'{message_object.description}' at topic {message_routing_key}")
                 self.__simulation_components.register_status_message(
                     message_object.source_process_id, message_object.epoch_number, message_object.message_id, True)
                 if self.__epoch_number >= 1:
@@ -245,10 +241,9 @@ class SimulationManager:
 
         if self.epoch_number <= self.max_epochs and self.__epoch_resends <= self.__max_epoch_resends:
             if new_epoch:
-                LOGGER.info("Starting Epoch {:d}".format(self.__epoch_number))
+                LOGGER.info(f"Starting Epoch {self.__epoch_number}")
             else:
-                LOGGER.info("Resending (try {:d}) epoch message for Epoch {:d}".format(
-                    self.__epoch_resends, self.__epoch_number))
+                LOGGER.info(f"Resending (try {self.__epoch_resends}) epoch message for Epoch {self.__epoch_number}")
 
             new_epoch_message = self.__get_epoch_message()
             if new_epoch_message is None:
@@ -274,7 +269,7 @@ class SimulationManager:
             exception_message = getattr(message_error, "message", None)
             if exception_message is None:
                 exception_message = str(type(message_error))
-            LOGGER.error("Problem with creating a simulation state message: {}".format(exception_message))
+            LOGGER.error(f"Problem with creating a simulation state message: {exception_message}")
             return None
 
         return state_message.bytes()
@@ -290,7 +285,7 @@ class SimulationManager:
                 EndTime=self.__current_end_time  # type: ignore
             )
         except (MessageError, ValueError, TypeError) as message_error:
-            LOGGER.error("Problem with creating a epoch message: {}".format(message_error))
+            LOGGER.error(f"Problem with creating a epoch message: {message_error}")
             return None
 
         return epoch_message.bytes()
@@ -316,7 +311,7 @@ class SimulationManager:
            or the simulation state message at the beginning of the simulation."""
         if self.get_simulation_state() == SimulationManager.SIMULATION_STATE_VALUE_RUNNING:
             if self.__epoch_resends >= self.__max_epoch_resends:
-                LOGGER.info("Maximum number of epoch resends reached for epoch {:d}".format(self.__epoch_number))
+                LOGGER.info(f"Maximum number of epoch resends reached for epoch {self.__epoch_number}")
                 await self.stop()
                 return
 

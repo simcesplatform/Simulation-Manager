@@ -1,12 +1,9 @@
-version: '3.5'
-
 services:
-
   simulation_manager_tests:
     build:
       context: ..
       dockerfile: Dockerfile-tests
-    image: simulation_manager_tests:1.0.4
+    image: simulation_manager_tests:1.1.0
     container_name: simulation_manager_tests
     restart: "no"
     environment:
@@ -20,4 +17,5 @@ services:
 
 networks:
   manager_test_network:
+    external: true
     name: manager_test_network

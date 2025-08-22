@@ -8,7 +8,7 @@
 
 import asyncio
 import random
-from typing import cast, Union
+from typing import cast
 
 from tools.components import AbstractSimulationComponent
 from tools.exceptions.messages import MessageError
@@ -72,7 +72,7 @@ class DummyComponent(AbstractSimulationComponent):
         """Starts a new epoch for the dummy component. Sends a status message when finished."""
         # At this point the simulation should be running and dummy ready to start the epoch.
 
-        # Simulate an error possibility by using the random error chanche setting.
+        # Simulate an error possibility by using the random error chance setting.
         rand_error_chance = random.random()
         if rand_error_chance < self._error_chance:
             LOGGER.error("Encountered a random error.")
@@ -81,8 +81,7 @@ class DummyComponent(AbstractSimulationComponent):
 
         # No errors, do normal epoch handling.
         rand_wait_time = random.uniform(self._min_delay, self._max_delay)
-        LOGGER.info("Component {:s} sending status message for epoch {:d} in {:.1f} seconds.".format(
-            self.component_name, self._latest_epoch, rand_wait_time))
+        LOGGER.info(f"Component {self.component_name} sending status message for epoch {self._latest_epoch} in {rand_wait_time:.1f} seconds.")
         await asyncio.sleep(rand_wait_time)
 
         await self._send_random_result_message()
@@ -114,7 +113,7 @@ class DummyComponent(AbstractSimulationComponent):
         else:
             await self._rabbitmq_client.send_message(self._result_topic, random_result_message.bytes())
 
-    def _get_status_message(self) -> Union[StatusMessage, None]:
+    def _get_status_message(self) -> StatusMessage | None:
         """Creates a new status message and returns it in bytes format.
            Returns None, if there was a problem creating the message."""
         status_message = super()._get_status_message()
@@ -128,7 +127,7 @@ class DummyComponent(AbstractSimulationComponent):
 
         return status_message
 
-    def _get_result_message(self) -> Union[ResultMessage, None]:
+    def _get_result_message(self) -> ResultMessage | None:
         """Creates a new result message and returns it in bytes format.
            Returns None, if there was a problem creating the message."""
         result_message = ResultMessage.from_json({

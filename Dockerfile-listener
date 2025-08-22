@@ -1,18 +1,23 @@
-FROM python:3.7.16
+FROM python:3.12.11-slim
 
-RUN mkdir -p /init
-RUN mkdir -p /listener
-RUN mkdir -p /logs
-RUN mkdir -p /simulation-tools
+# Ensure that the used folders exist
+RUN mkdir -p /init && \
+    mkdir -p /listener && \
+    mkdir -p /logs && \
+    mkdir -p /simulation-tools
 
+# Install the required packages
 COPY requirements.txt /requirements.txt
-RUN pip install --upgrade pip
-RUN pip install -r /requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r /requirements.txt
 
+# Copy the application files
 COPY init/ /init/
 COPY listener/ /listener/
 COPY simulation-tools/ /simulation-tools/
 
+# Set the working directory in the container
 WORKDIR /
 
+# Set the command to run the application
 CMD [ "python3", "-u", "-m", "listener.listener" ]

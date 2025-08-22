@@ -1,12 +1,9 @@
-version: '3.5'
-
 services:
-
   listener:
     build:
       context: ..
       dockerfile: Dockerfile-listener
-    image: listener:1.0.4
+    image: listener:1.1.0
     container_name: listener_component
     restart: "no"
     env_file:

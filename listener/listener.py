@@ -9,6 +9,7 @@
 import asyncio
 
 from tools.clients import RabbitmqClient
+from tools.message.abstract import BaseMessage
 from tools.messages import AbstractMessage
 from tools.tools import FullLogger, load_environmental_variables
 
@@ -32,19 +33,18 @@ class ListenerComponent:
         """The simulation ID for the simulation."""
         return self.__simulation_id
 
-    async def simulation_message_handler(self, message_object, message_routing_key):
+    async def simulation_message_handler(self, message_object: BaseMessage | dict | str, message_routing_key: str):  # noqa
         """Handles the received simulation state messages."""
         if isinstance(message_object, AbstractMessage):
             if message_object.simulation_id != self.simulation_id:
                 LOGGER.info(
-                    "Received state message for a different simulation: '{:s}' instead of '{:s}'".format(
-                        message_object.simulation_id, self.simulation_id))
+                    f"Received state message for a different simulation: '{message_object.simulation_id}' " +
+                    f"instead of '{self.simulation_id}'")
             else:
-                LOGGER.info("{:s} : {:s}".format(message_routing_key, str(message_object.json())))
+                LOGGER.info(f"{message_routing_key} : {message_object.json()}")
 
         else:
-            LOGGER.warning("Received '{:s}' message when expecting for '{:s}' message".format(
-                str(type(message_object)), str(AbstractMessage)))
+            LOGGER.warning(f"Received '{type(message_object)}' message when expecting for '{AbstractMessage}' message")
 
 
 async def start_listener_component():

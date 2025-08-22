@@ -52,6 +52,7 @@ class MessageGeneratorExtended(MessageGenerator):
     def __init__(self, simulation_id: str, process_id: str) -> None:
         super().__init__(simulation_id, process_id)
         self.values = get_random_initial_values()
+        self.latest_message_id = ""
 
     def get_result_message(self, epoch_number: int, triggering_message_ids: List[str]) -> ResultMessage:
         """Returns a result message similar to the dummy component result messages."""

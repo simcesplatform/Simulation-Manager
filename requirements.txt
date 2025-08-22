@@ -1,2 +1,2 @@
-aio_pika==6.8.2
+aio_pika==9.5.7
 aiounittest==1.4.2

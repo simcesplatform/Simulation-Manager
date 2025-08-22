@@ -142,7 +142,7 @@ def get_latest_values(random_series_collection: Dict[str, Union[float, TimeSerie
        Raises TimeseriesError if not all attributes are included in the given random_series_collection."""
     for random_attribute in RANDOM_ATTRIBUTES:
         if random_attribute not in random_series_collection:
-            raise MessageError("Missing attribute: {:s}".format(random_attribute))
+            raise MessageError(f"Missing attribute: {random_attribute}".format(random_attribute))
 
     latest_values = {}
     for attribute_name, attribute_values in random_series_collection.items():

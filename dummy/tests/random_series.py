@@ -8,8 +8,6 @@
 
 import unittest
 
-# from dummy.random_series import get_all_random_series, get_latest_values, get_random_initial_values
-
 
 class TestDummyRandomSeries(unittest.TestCase):
     """Unit tests for the random time series for DummyComponent."""

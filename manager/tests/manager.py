@@ -8,8 +8,6 @@
 
 import unittest
 
-# from manager.manager import SimulationManager
-
 
 class TestSimulationManager(unittest.TestCase):
     """Unit tests for the SimulationManager class."""
